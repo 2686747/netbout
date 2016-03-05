@@ -1,35 +1,25 @@
 <?xml version="1.0"?>
-<!--
- * Copyright (c) 2009-2016, netbout.com
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are PROHIBITED without prior written permission from
- * the author. This product may NOT be used anywhere and on any computer
- * except the server platform of netbout Inc. located at www.netbout.com.
- * Federal copyright law prohibits unauthorized reproduction by any means
- * and imposes fines up to $25,000 for violation. If you received
- * this code accidentally and without intent to use it, please report this
- * incident to the author by email.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * @author Yegor Bugayenko (yegor@teamed.io)
- * @version $Id$
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<!-- * Copyright (c) 2009-2016, netbout.com * All rights reserved. * * Redistribution 
+    and use in source and binary forms, with or without * modification, are PROHIBITED 
+    without prior written permission from * the author. This product may NOT 
+    be used anywhere and on any computer * except the server platform of netbout 
+    Inc. located at www.netbout.com. * Federal copyright law prohibits unauthorized 
+    reproduction by any means * and imposes fines up to $25,000 for violation. 
+    If you received * this code accidentally and without intent to use it, please 
+    report this * incident to the author by email. * * THIS SOFTWARE IS PROVIDED 
+    BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS * "AS IS" AND ANY EXPRESS OR IMPLIED 
+    WARRANTIES, INCLUDING, BUT NOT * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY 
+    AND FITNESS FOR * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
+    THE COPYRIGHT * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
+    INCIDENTAL, * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+    NOT * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
+    * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON * ANY 
+    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, * OR TORT (INCLUDING 
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT * OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF * SUCH DAMAGE. * * @author Yegor Bugayenko 
+    (yegor@teamed.io) * @version $Id: 72b448c6cdf483b75b11c02990eb6f3320a4e213 
+    $ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -311,48 +301,87 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>0.0.25</version>
-                <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <configuration>
-                            <nodeVersion>v0.12.7</nodeVersion>
-                            <npmVersion>2.11.3</npmVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>npm install</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>bower install</id>
-                        <goals>
-                            <goal>bower</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
     <profiles>
         <profile>
+            <id>frontend</id>
+            <activation>
+                <file>
+                    <exists>pom.xml</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>0.0.25</version>
+                        <executions>
+                            <execution>
+                                <id>install node and npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                                <configuration>
+                                    <nodeVersion>v0.12.7</nodeVersion>
+                                    <npmVersion>2.11.3</npmVersion>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>install</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>bower install</id>
+                                <goals>
+                                    <goal>bower</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>install</arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <!-- Move javascript files loaded by bower -->
+                            <execution>
+                                <phase>process-resources</phase>
+                                <configuration>
+                                    <target>
+                                        <echo message = "ANT2" />
+                                        <mkdir dir="target/classes/js/thridparty/" />
+                                        <move todir="target/classes/js/thridparty/">
+                                            <fileset dir="target/js-tmp/jquery-textcomplete/dist/">
+                                                <include name="jquery.textcomplete.min.*"/>
+                                            </fileset>
+                                        </move>
+                                        <delete  dir="target/js-tmp"/>
+                                        <echo message = "ANT2-end" />
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>resources</id>
             <activation>
-                <file><exists>pom.xml</exists></file>
+                <file>
+                    <exists>pom.xml</exists>
+                </file>
             </activation>
             <build>
                 <plugins>
@@ -443,7 +472,9 @@
         <profile>
             <id>takes-setup</id>
             <activation>
-                <file><exists>pom.xml</exists></file>
+                <file>
+                    <exists>pom.xml</exists>
+                </file>
             </activation>
             <build>
                 <plugins>
@@ -466,7 +497,8 @@
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <systemPropertyVariables combine.children="append">
+                            <systemPropertyVariables
+                                combine.children="append">
                                 <takes.home>http://localhost:${takes.port}</takes.home>
                             </systemPropertyVariables>
                         </configuration>
@@ -559,12 +591,10 @@
                             </execution>
                             <execution>
                                 <id>casperjs-test</id>
-                                <!--
-                                @todo #1025:30min This integration test doesn't work on Mac OSX
-                                 at all. I tried to run it a few times and every time all tests
-                                 fail with some sort "timeout" problem. I'm not sure what it
-                                 is. Let's try to fix and enable it again.
-                                -->
+                                <!-- @todo #1025:30min This integration test 
+                                    doesn't work on Mac OSX at all. I tried to run it a few times and every time 
+                                    all tests fail with some sort "timeout" problem. I'm not sure what it is. 
+                                    Let's try to fix and enable it again. -->
                                 <phase>never</phase>
                                 <!-- <phase>integration-test</phase> -->
                                 <goals>
@@ -595,7 +625,9 @@
         <profile>
             <id>dynamodb</id>
             <activation>
-                <file><exists>pom.xml</exists></file>
+                <file>
+                    <exists>pom.xml</exists>
+                </file>
             </activation>
             <build>
                 <plugins>
@@ -670,7 +702,8 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <parallel>none</parallel>
-                            <systemPropertyVariables combine.children="append">
+                            <systemPropertyVariables
+                                combine.children="append">
                                 <dynamo.port>${dynamodblocal.port}</dynamo.port>
                             </systemPropertyVariables>
                         </configuration>
@@ -711,7 +744,9 @@
         <profile>
             <id>heroku</id>
             <activation>
-                <file><exists>pom.xml</exists></file>
+                <file>
+                    <exists>pom.xml</exists>
+                </file>
             </activation>
             <build>
                 <finalName>netbout</finalName>
@@ -758,23 +793,18 @@
                                 <exclude>checkstyle:/src/main/scss/.*</exclude>
                                 <exclude>checkstyle:/src/test/casperjs/.*</exclude>
                                 <exclude>checkstyle:/src/main/js/.*</exclude>
-                                <!--
-                                @todo #911:30min Fix findbugs errors in web
-                                 Some issues may not require fixing an should be
-                                 excluded. Filters in qulice 0.12 are broken, right
-                                 excludes should be more granular. I think it should
-                                 be resolved when #961 completed due to broken
-                                 Findbugs filters in current version of Qulice
-                                -->
+                                <!-- @todo #911:30min Fix findbugs errors 
+                                    in web Some issues may not require fixing an should be excluded. Filters 
+                                    in qulice 0.12 are broken, right excludes should be more granular. I think 
+                                    it should be resolved when #961 completed due to broken Findbugs filters 
+                                    in current version of Qulice -->
                                 <exclude>findbugs:.*</exclude>
                                 <exclude>xml:/src/main/resources/lang/.*</exclude>
                                 <exclude>duplicatefinder:.*</exclude>
-                                <!--
-                                @todo #1012:30min These excludes were added because
-                                 of the upgrade to qulice 0.16.2. The new version of qulice
-                                 adds some javadocs rules and also regexp rules for imported
-                                 some wrong classes which should be replaced with others.
-                                -->
+                                <!-- @todo #1012:30min These excludes were 
+                                    added because of the upgrade to qulice 0.16.2. The new version of qulice 
+                                    adds some javadocs rules and also regexp rules for imported some wrong classes 
+                                    which should be replaced with others. -->
                                 <exclude>checkstyle:/src/main/java/com/netbout/rest/bout/TkAttach.java</exclude>
                                 <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyAliasesITCase.java</exclude>
                                 <exclude>checkstyle:/src/test/java/com/netbout/dynamo/DyAliasITCase.java</exclude>
